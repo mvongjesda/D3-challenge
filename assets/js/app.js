@@ -15,19 +15,55 @@ let chartWidth = svgWidth - margin.left - margin.right;
 let chartHeight = svgHeight - margin.top - margin.bottom;
 let chart = d3.select("#scatter").append("div").classed("chart", true);
 
-// Select body, append SVG area to it, and set its dimensions
+
 let svg = d3.select("body")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
-// Append a group area, then set its margins
 let chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 // Load data from data.csv
 d3.csv("assets/data/data.csv").then(function(censusData) {
 
-    // Print the forceData
-    console.log(censusData);
+  console.log(censusData);
+
+// Parse healthcare and poverty data
+  censusData.forEach(function(data) {
+    data.healthcare = +data.healthcare;
+    data.poverty = +data.poverty;
+  });
+
+
+  let xLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(censusData, data => data.healthcare)])
+    .range([0, chartHeight]);
+
+    let yLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(censusData, data => data.poverty)])
+    .range([chartHeight, 0]);
+
+
+  let bottomAxis = d3.axisBottom(xLinearScale);
+  let leftAxis = d3.axisLeft(yLinearScale);
+
+  let drawLine = d3.line()
+    .x(data => xLinearScale(data.healthcare))
+    .y(data => yLinearScale(data.poverty));
+
+  chartGroup.append("path")
+    .attr("d", drawLine(censusData))
+    .classed("dot", true);
+
+  chartGroup.append("g")
+    .classed("axis", true)
+    .call(leftAxis);
+
+  chartGroup.append("g")
+    .classed("axis", true)
+    .attr("transform", `translate(0, ${chartHeight})`)
+    .call(bottomAxis);
+}).catch(function(error) {
+  console.log(error);
 });

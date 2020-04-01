@@ -2,7 +2,7 @@
 let svgWidth = 960;
 let svgHeight = 500;
 
-// Define the chart's margins as an object
+// Define the chart's margins
 let margin = {
   top: 60,
   right: 60,
@@ -64,8 +64,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
     .attr("fill", "purple")
     .attr("opacity", ".5");
 
-// Initialize tool tip
-    // ==============================
+// ==============================
     let toolTip = d3.tip()
       .attr("class", "tooltip")
       .offset([80, -60])
@@ -77,8 +76,6 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
     // ==============================
     chartGroup.call(toolTip);
 
-
-// ==============================
     circlesGroup.on("click", function(data) {
         toolTip.show(data, this);
       })
@@ -87,19 +84,19 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
           toolTip.hide(data);
         });
   
-      // Create axes labels
+// Create axes labels
       chartGroup.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - margin.left + 40)
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .attr("class", "axisText")
-        .text("Lacks Healthcare (%);
+        .text("Lacks Healthcare (%)");
   
       chartGroup.append("text")
         .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
         .attr("class", "axisText")
-        .text("Lacks Healthcare (%)");
+        .text("In Poverty(%)");
     }).catch(function(error) {
       console.log(error);
     });
